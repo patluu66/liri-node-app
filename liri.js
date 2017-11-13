@@ -14,7 +14,7 @@ var secondTerminalCommand = function() {
 
   for(var i = 3; i < longInput.length; i++) {
     // console.log(longInput[i]);
-    input2 += longInput[i] + "+"  
+    input2 += longInput[i] + " "  
   }
 
   return input2.substring(0, input2.length - 1);
@@ -23,7 +23,7 @@ var secondTerminalCommand = function() {
 
 
 // node liri.js movie-this matrix reloaded
-function movieThis(movieTitle) {
+function movieThis(movieTitle = "Mr. Nobody") {
 
   var movieName = movieTitle;
 
@@ -67,6 +67,70 @@ function myTweets() {
 }
 
 
+// node liri.js spotify-this-song I Fall Apart
+function spotifyThisSong(songInput) {
+ 
+  var spotify = new Spotify({
+    id: '21b269d9148a4679be42ec894486fb8b',
+    secret: '97cad2d8cc78492797be0b251d552c0c'
+  });
+
+  var songTitle = songInput;
+
+  spotify.search({ type: 'track', query: songTitle }, function(err, data) {
+    if (err) {
+      return console.log('Error occurred: ' + err);
+    }
+    var artistsName = data.tracks.items[0].album.artists[0].name;
+    // var album = data.tracks.items[0].album.artists[0].name;
+    var address = data.tracks.items[0].album.artists[0].href;
+    var album = data.tracks.items[0].album.name;
+    var song = data.tracks.items[0].name;
+
+
+    console.log('Artist(s): ' + artistsName);
+    console.log("The song's name: " + song);
+    console.log('A preview link of the song from Spotify: ' + address);
+    console.log('The album that the song is from: ' + album);
+    // console.log(song2);
+
+  });
+
+}
+
+
+//node liri.js do-what-it-says
+function doWhatItSays() {
+
+  fs.readFile("random.txt", "utf8", function(error, data) {
+
+    if (error) {
+      return console.log(error);
+    }
+
+    var dataArr = data.split(",");
+
+    spotifyThisSong(dataArr[1]);
+
+  });
+
+}
+
+function log() {
+
+  var textFile = firstTerminalCommand;
+
+  fs.appendFile("log.txt", "node liri.js " + textFile + " " + secondTerminalCommand() + "\n", function(err) {
+
+    if (err) {
+      console.log(err);
+    }else {
+      console.log("Content Added!");
+    }
+
+  });
+
+}
 
 
 function startLiri() {
@@ -76,7 +140,7 @@ function startLiri() {
       if(secondTerminalCommand()) {
         movieThis(secondTerminalCommand());
       } else {
-        movieThis("Mr. Nobody");
+        movieThis();
       }
       log();
       break;
